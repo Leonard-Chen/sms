@@ -1,0 +1,36 @@
+:root {
+  --sms-bg: #f6f7fb;
+  --sms-surface: #ffffff;
+  --sms-surface-2: #f3f4f6;
+  --sms-border: rgba(15, 23, 42, 0.08);
+  --sms-text: rgba(15, 23, 42, 0.92);
+  --sms-text-2: rgba(15, 23, 42, 0.62);
+  --sms-accent: #2563eb;
+  --sms-accent-2: #7c3aed;
+  --sms-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+
+  font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--sms-text);
+  background: var(--sms-bg);
+}
+
+#app {
+  height: 100%;
+}
+
+/* Element Plus tweaks (light touch) */
+.el-card {
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}

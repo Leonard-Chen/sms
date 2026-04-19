@@ -1,0 +1,30 @@
+本地运行SMS微服务（Windows）
+
+一、先启动基础设施（本仓库不包含这些安装包）
+  1.MySQL：库名sms，与sms-dao中application-dto.yml的配置一致
+  2.Redis：默认localhost:6379
+  3.Nacos：默认localhost:8848
+
+二、再启动Spring Boot任选一种方式）
+
+  A)用脚本（在项目根目录外执行scripts下的bat即可）
+     - 每个run-*.bat会在当前窗口跑一个服务（适合调试）
+     - run-all-new-windows.bat会打开多个CMD窗口依次启动（需等前一阶段就绪）
+
+  B)用Maven（须在仓库根目录，且JAVA_HOME为jdk 21的安装目录/bin）
+     mvn -pl sms-system -am spring-boot:run
+     mvn -pl sms-customer -am spring-boot:run
+     ... 其余模块同理
+     最后：mvn -pl sms-gateway -am spring-boot:run
+
+  C)用IntelliJ IDEA
+     分别运行各模块的启动类
+
+三、建议启动顺序
+  1.sms-system（9100，OAuth/库表）
+  2.sms-customer、sms-order、sms-employee、sms-statistics（任意）
+  3.sms-gateway（9000，对外入口）
+
+四、对外访问
+  浏览器：http://localhost/
+  curl：http://localhost:9000/

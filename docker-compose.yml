@@ -1,0 +1,129 @@
+version: '3.8'
+
+services:
+  #MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: sms-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: leonard114514
+      MYSQL_DATABASE: sms
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - sms-network
+
+  #Redis
+  redis:
+    image: redis:7-alpine
+    container_name: sms-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - sms-network
+
+  #Nacos
+  nacos:
+    image: nacos/nacos-server:v2.3.0
+    container_name: sms-nacos
+    environment:
+      MODE: standalone
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    networks:
+      - sms-network
+
+  #网关服务
+  sms-gateway:
+    build: ./sms-gateway
+    container_name: sms-gateway
+    ports:
+      - "9000:9000"
+    depends_on:
+      - nacos
+    networks:
+      - sms-network
+
+  #系统服务
+  sms-system:
+    build: ./sms-system
+    container_name: sms-system
+    ports:
+      - "9100:9100"
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    networks:
+      - sms-network
+
+  #客户服务
+  sms-customer:
+    build: ./sms-customer
+    container_name: sms-customer
+    ports:
+      - "9200:9200"
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    networks:
+      - sms-network
+
+  #订单服务
+  sms-order:
+    build: ./sms-order
+    container_name: sms-order
+    ports:
+      - "9300:9300"
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    networks:
+      - sms-network
+
+  #员工服务
+  sms-employee:
+    build: ./sms-employee
+    container_name: sms-employee
+    ports:
+      - "9400:9400"
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    networks:
+      - sms-network
+
+  #统计服务
+  sms-statistics:
+    build: ./sms-statistics
+    container_name: sms-statistics
+    ports:
+      - "9500:9500"
+    depends_on:
+      - nacos
+    networks:
+      - sms-network
+
+  #前端网页服务
+  sms-frontend:
+    build: ./sms-frontend
+    container_name: sms-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - sms-gateway
+    networks:
+      - sms-network
+
+volumes:
+  mysql-data:
+
+networks:
+  sms-network:
+    driver: bridge

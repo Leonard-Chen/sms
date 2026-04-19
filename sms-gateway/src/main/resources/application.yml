@@ -1,0 +1,73 @@
+server:
+  port: 9000
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: reactive
+  application:
+    name: sms-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: localhost:8848
+        file-extension: yml
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: sms-system
+          uri: lb://sms-system
+          predicates:
+            - Path=/sys/**,/auth/**,/oauth2/**,/.well-known/**,/error
+          filters:
+            - PreserveHostHeader
+            - StripPrefix=0
+        - id: sms-customer
+          uri: lb://sms-customer
+          predicates:
+            - Path=/customer/**
+          filters:
+            - PreserveHostHeader
+            - StripPrefix=0
+        - id: sms-employee
+          uri: lb://sms-employee
+          predicates:
+            - Path=/employee/**,/dept/**
+          filters:
+            - PreserveHostHeader
+            - StripPrefix=0
+        - id: sms-order
+          uri: lb://sms-order
+          predicates:
+            - Path=/order/**
+          filters:
+            - PreserveHostHeader
+            - StripPrefix=0
+        - id: sms-statistics
+          uri: lb://sms-statistics
+          predicates:
+            - Path=/stats/**
+          filters:
+            - PreserveHostHeader
+            - StripPrefix=0
+        - id: sms-ai
+          uri: lb://sms-ai
+          predicates:
+            - Path=/ai/**
+          filters:
+            - PreserveHostHeader
+            - StripPrefix=0
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9000
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web.reactive: DEBUG

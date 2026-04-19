@@ -1,0 +1,30 @@
+server:
+  port: 9500
+
+spring:
+  profiles:
+    include: dao
+  application:
+    name: sms-statistics
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9000/oauth2/jwks
+      client:
+        registration:
+          sms-service:
+            client-id: sms-service
+            client-secret: sms-service
+            authorization-grant-type: client_credentials
+        provider:
+          sms-service:
+            token-uri: http://localhost:9000/oauth2/token
+
+logging:
+  level:
+    org.springframework.security: DEBUG

@@ -1,0 +1,28 @@
+server:
+  port: 9600
+
+spring:
+  profiles:
+    include: dto
+  application:
+    name: sms-ai
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9000/oauth2/jwks
+
+ai:
+  provider: ${AI_PROVIDER:openai-compatible}
+  base-url: ${AI_BASE_URL:https://api.moonshot.cn/v1}
+  api-key: ${AI_API_KEY:sk-BAu8rz9Z7sh5pLOi9Bgt8BMGZXzkPMjkEBHKF889rvAM0ZHx}
+  model: ${AI_MODEL:kimi-k2-0711-preview}
+  timeout-ms: ${AI_TIMEOUT_MS:30000}
+
+logging:
+  level:
+    org.springframework.security: INFO

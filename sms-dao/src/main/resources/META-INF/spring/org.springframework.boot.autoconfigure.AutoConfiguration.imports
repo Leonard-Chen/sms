@@ -1,0 +1,2 @@
+com.gdut.sms.dao.config.RedisConfig
+com.gdut.sms.common.config.SerializationConfig
