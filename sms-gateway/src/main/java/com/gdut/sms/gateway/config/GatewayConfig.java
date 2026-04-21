@@ -24,6 +24,7 @@ public class GatewayConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange -> exchange
                         .pathMatchers("/oauth2/**", "/.well-known/**", "/auth/**").permitAll()
+                        .pathMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .pathMatchers("/sys/**").hasAuthority("ADMIN")
                         //业务接口权限校验
                         .pathMatchers("/order/**").hasAnyAuthority("ADMIN", "USER", "MANAGER", "OWNER")
