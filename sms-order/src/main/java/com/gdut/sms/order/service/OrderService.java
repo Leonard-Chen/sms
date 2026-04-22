@@ -131,7 +131,10 @@ public class OrderService {
     }
 
     @Transactional
-    @CachePut(value = "order", key = "#dto.orderNo")
+    @Caching(
+            put = @CachePut(value = "order", key = "#dto.orderNo"),
+            evict = @CacheEvict(value = "order_list", allEntries = true)
+    )
     public OrderDTO update(OrderDTO dto) {
         Order order = orderRepository.findByOrderNo(dto.getOrderNo())
                 .orElseThrow(() -> new RuntimeException("订单不存在"));
