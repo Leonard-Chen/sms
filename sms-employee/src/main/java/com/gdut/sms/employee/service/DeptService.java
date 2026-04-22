@@ -62,6 +62,7 @@ public class DeptService {
         return new DeptDTO(deptRepository.save(new Department(dto)));
     }
 
+    @Transactional
     @CacheEvict(value = "dept", key = "#no")
     public void delete(String no) {
         deptRepository.deleteByDeptNo(no);
