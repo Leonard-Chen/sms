@@ -64,7 +64,12 @@ public class CustomerService {
     }
 
     @Transactional
-    @CacheEvict(value = "customer", key = "#customerNo")
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "customer", key = "#customerNo"),
+                    @CacheEvict(value = "customer_list", allEntries = true)
+            }
+    )
     public void delete(String customerNo) {
         customerRepository.deleteByCustomerNo(customerNo);
     }
