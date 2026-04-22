@@ -43,7 +43,7 @@ public class EmployeeService {
         String no;
         do {
             no = "E" + RandomUUID.generate(19, RandomUUID.CharType.DIGIT);
-        } while (get(no) != null);
+        } while (employeeRepository.findByEmployeeNo(no).isPresent());
 
         User user = new User();
         user.setUsername(username);
