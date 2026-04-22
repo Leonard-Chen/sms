@@ -112,7 +112,6 @@ public class OrderService {
     }
 
     @Transactional
-    @Cacheable(value = "order", key = "#result.orderNo")
     public OrderDTO create(OrderDTO dto, String username) {
         String no;
         do {
