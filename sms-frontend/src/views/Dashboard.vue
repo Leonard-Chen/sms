@@ -123,7 +123,7 @@ const renderLineChart = async () => {
         type: 'category',
         data: year
             ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(n => n + '月')
-            : yearOptions.value.splice(0, yearOptions.value.length - 1).map(n => n + '年')
+            : yearOptions.value.slice(0, yearOptions.value.length - 1).map(n => n + '年')
       },
       yAxis: [
         {type: 'value', name: '订单数量'},
