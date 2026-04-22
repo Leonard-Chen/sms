@@ -48,6 +48,7 @@ public class CustomerService {
         user.setUsername(username);
 
         Customer customer = new Customer(dto);
+        customer.setCustomerNo(no);
         customer.setCreatedBy(user);
 
         return new CustomerDTO(customerRepository.save(customer));
