@@ -66,7 +66,10 @@ public class EmployeeService {
     }
 
     @Transactional
-    @CachePut(value = "employee", key = "#no")
+    @Caching(
+            put = @CachePut(value = "employee", key = "#no"),
+            evict = @CacheEvict(value = "employee_list", allEntries = true)
+    )
     public EmployeeDTO updateWorkStatus(String no, Integer status) {
         Employee employee = employeeRepository.findByEmployeeNo(no)
                 .orElseThrow(() -> new RuntimeException("员工不存在"));
