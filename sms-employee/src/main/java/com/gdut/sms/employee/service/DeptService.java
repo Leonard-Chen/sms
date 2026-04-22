@@ -25,7 +25,7 @@ public class DeptService {
 
     private final DeptRepository deptRepository;
 
-    @Cacheable(value = "dept_list", key = "0", unless = "#result == null || #result.empty")
+    @Cacheable(value = "dept_list", unless = "#result == null || #result.empty")
     public List<Department> list() {
         return deptRepository.findAll();
     }
