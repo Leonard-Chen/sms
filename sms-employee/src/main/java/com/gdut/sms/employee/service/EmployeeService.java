@@ -39,6 +39,7 @@ public class EmployeeService {
     }
 
     @Transactional
+    @CacheEvict(value = "employee_list", allEntries = true)
     public EmployeeDTO create(EmployeeDTO dto, String username) {
         String no;
         do {
