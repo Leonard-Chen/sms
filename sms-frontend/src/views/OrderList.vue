@@ -318,7 +318,6 @@ import request from '../utils/request'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {ref, reactive, onMounted, watch, computed} from 'vue'
 
-/*
 const toLocalDateTimeString = (val) => {
   if (!val) return null
   const d = val instanceof Date ? val : new Date(val)
@@ -326,7 +325,6 @@ const toLocalDateTimeString = (val) => {
   const pad = (n) => String(n).padStart(2, '0')
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
 }
- */
 
 const loading = ref(false)
 const tableData = ref([])
@@ -527,7 +525,7 @@ const handleCreate = async () => {
       serviceType: createForm.serviceType,
       serviceContent: createForm.serviceContent,
       orderAmount: createForm.orderAmount,
-      expectedTime: new Date(createForm.expectedTime),
+      expectedTime: toLocalDateTimeString(createForm.expectedTime),
       serviceAddress: createForm.serviceAddress,
       remarks: createForm.remarks
     });
@@ -593,7 +591,7 @@ const handleUpdate = async () => {
       serviceType: editForm.serviceType,
       serviceContent: editForm.serviceContent,
       orderAmount: editForm.orderAmount,
-      expectedTime: editForm.expectedTime,
+      expectedTime: toLocalDateTimeString(editForm.expectedTime),
       serviceAddress: editForm.serviceAddress,
       remarks: editForm.remarks
     });
