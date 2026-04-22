@@ -20,7 +20,7 @@ public class RoleService {
 
     private final RoleRepository roleRepository;
 
-    @Cacheable(value = "role_list", key = "0", unless = "#result == null || #result.empty")
+    @Cacheable(value = "role_list", unless = "#result == null || #result.empty")
     public List<?> list() {
         class RoleDTO {
             final String roleCode;

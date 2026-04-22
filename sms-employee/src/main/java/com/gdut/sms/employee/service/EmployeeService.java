@@ -6,6 +6,7 @@ import com.gdut.sms.common.entity.Employee;
 import com.gdut.sms.common.dto.EmployeeDTO;
 import com.gdut.sms.common.utils.RandomUUID;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
@@ -25,7 +26,7 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    @Cacheable(value = "employee_list", key = "0", unless = "#result == null || #result.empty")
+    @Cacheable(value = "employee_list", unless = "#result == null || #result.empty")
     public List<EmployeeDTO> list() {
         return employeeRepository.findAll().stream()
                 .map(EmployeeDTO::new)

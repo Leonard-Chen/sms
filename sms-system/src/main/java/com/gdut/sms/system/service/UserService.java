@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import com.gdut.sms.common.dto.UserDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Caching;
 import com.gdut.sms.system.repository.UserRepository;
-import com.gdut.sms.system.repository.RoleRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +41,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    @Cacheable(value = "user_list", key = "0", unless = "#result == null || #result.empty")
+    @Cacheable(value = "user_list", unless = "#result == null || #result.empty")
     public List<UserDTO> list() {
         return userRepository.findAll().stream()
                 .map(UserDTO::new)
