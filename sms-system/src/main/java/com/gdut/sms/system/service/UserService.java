@@ -49,7 +49,12 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    @CacheEvict(value = "user", key = "#username")
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "user", key = "#username"),
+                    @CacheEvict(value = "user_list", allEntries = true)
+            }
+    )
     public void delete(String username) {
         userRepository.deleteByUsername(username);
     }
