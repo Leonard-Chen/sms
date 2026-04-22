@@ -1,11 +1,15 @@
 package com.gdut.sms.customer.service;
 
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import com.gdut.sms.common.entity.User;
 import com.gdut.sms.common.entity.Customer;
 import com.gdut.sms.common.dto.CustomerDTO;
 import com.gdut.sms.common.utils.RandomUUID;
 import org.springframework.stereotype.Service;
+import com.gdut.sms.common.utils.DateTimeUtils;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
 import com.gdut.sms.customer.repository.CustomerRepository;
@@ -15,6 +19,7 @@ import java.util.List;
 
 /**
  * 后端客户管理核心业务
+ *
  * @author ckx
  */
 @Service
@@ -23,11 +28,20 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
-    @Cacheable(value = "customer_list", key = "0", unless = "#result == null || #result.empty")
+    @Cacheable(value = "customer_list", unless = "#result == null || #result.empty")
     public List<CustomerDTO> list() {
         return customerRepository.findAll().stream()
                 .map(CustomerDTO::new)
                 .toList();
+    }
+
+    @Cacheable(value = "customer_count", key = "#year != null ? #year : 'all'", unless = "#result == null")
+    public Long count(@Nullable Integer year) {
+        return year == null ? customerRepository.count()
+                : customerRepository.countByCreateTimeBetween(
+                DateTimeUtils.firstTimeOfTheYear(year),
+                DateTimeUtils.lastTimeOfTheYear(year)
+        );
     }
 
     @Cacheable(value = "customer", key = "#customerNo", unless = "#result == null")

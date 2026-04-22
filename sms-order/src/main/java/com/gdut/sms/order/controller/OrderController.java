@@ -171,35 +171,35 @@ public class OrderController {
     @Operation(summary = "统计订单", description = "统计所有类型订单的总数")
     @GetMapping("/count")
     @OperationLogging(module = "订单管理", type = "查询", desc = "统计订单数量")
-    public ResponseEntity<?> count() {
+    public ResponseEntity<?> count(@RequestParam(required = false) Integer year) {
         try {
-            return ResponseEntity.ok(orderService.count());
+            return ResponseEntity.ok(orderService.count(year));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
-    @Operation(summary = "统计订单", description = "统计【已完成】订单的总数")
+    @Operation(summary = "统计订单", description = "统计所有或某一年内【已完成】订单的总数")
     @GetMapping("/count/finished")
     @OperationLogging(module = "订单管理", type = "查询", desc = "统计已完成订单数量")
-    public ResponseEntity<?> countFinished() {
+    public ResponseEntity<?> countFinished(@RequestParam(required = false) Integer year) {
         try {
-            return ResponseEntity.ok(orderService.countFinishedOrders());
+            return ResponseEntity.ok(orderService.countFinishedOrders(year));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
-    @Operation(summary = "统计订单", description = "统计部分类型（包括【已完成】、【服务中】、【待审核】、【已取消】订单的总数")
+    @Operation(summary = "统计订单", description = "分别统计所有或某一年内【已完成】、【服务中】、【待审核】、【已取消】订单的总数")
     @GetMapping("/count/stats")
     @OperationLogging(module = "订单管理", type = "查询", desc = "分别统计已完成、服务中、待审核、已取消的订单数量")
-    public ResponseEntity<?> countForStatistics() {
+    public ResponseEntity<?> countForStatistics(@RequestParam(required = false) Integer year) {
         try {
             return ResponseEntity.ok(new Long[] {
-                    orderService.countFinishedOrders(),
-                    orderService.countPendingOrders(),
-                    orderService.countOrdersToBeAudited(),
-                    orderService.countCanceledOrders()
+                    orderService.countFinishedOrders(year),
+                    orderService.countPendingOrders(year),
+                    orderService.countOrdersToBeAudited(year),
+                    orderService.countCanceledOrders(year)
             });
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
@@ -209,8 +209,8 @@ public class OrderController {
     @Operation(summary = "统计订单", description = "统计某一时间段内的订单总额")
     @GetMapping("/sum")
     @OperationLogging(module = "订单管理", type = "查询", desc = "统计某一时间段内的订单总额")
-    public ResponseEntity<?> sumAmountBetween(@RequestParam LocalDateTime start,
-                                              @RequestParam LocalDateTime end) {
+    public ResponseEntity<?> sumAmountBetween(@RequestParam(required = false) LocalDateTime start,
+                                              @RequestParam(required = false) LocalDateTime end) {
         try {
             return ResponseEntity.ok(orderService.sumAmountBetween(start, end));
         } catch (Exception e) {
@@ -224,6 +224,18 @@ public class OrderController {
     public ResponseEntity<?> monthly(@RequestParam Integer year) {
         try {
             return ResponseEntity.ok(orderService.getMonthlyStatistics(year));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "统计订单", description = "统计各年的订单数量及总额")
+    @GetMapping("/annually")
+    @OperationLogging(module = "订单管理", type = "查询", desc = "获取某一时间段内的年度数据")
+    public ResponseEntity<?> annually(@RequestParam Integer start,
+                                      @RequestParam Integer end) {
+        try {
+            return ResponseEntity.ok(orderService.getAnnuallyStatistics(start, end));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }

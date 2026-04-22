@@ -14,19 +14,23 @@ import java.time.LocalDateTime;
 public interface OrderClient {
 
     @GetMapping("/count")
-    ResponseEntity<Long> count();
+    ResponseEntity<Long> count(@RequestParam(required = false) Integer year);
 
     @GetMapping("/count/finished")
-    ResponseEntity<Long> countFinished();
+    ResponseEntity<Long> countFinished(@RequestParam(required = false) Integer year);
 
     @GetMapping("/count/stats")
-    ResponseEntity<Long[]> countForStatistics();
+    ResponseEntity<Long[]> countForStatistics(@RequestParam(required = false) Integer year);
 
     @GetMapping("/sum")
-    ResponseEntity<BigDecimal> sumAmountBetween(@RequestParam LocalDateTime start,
-                                                @RequestParam LocalDateTime end);
+    ResponseEntity<BigDecimal> sumAmountBetween(@RequestParam(required = false) LocalDateTime start,
+                                                @RequestParam(required = false) LocalDateTime end);
 
     @GetMapping("/monthly")
     ResponseEntity<List<Object[]>> monthly(@RequestParam Integer year);
+
+    @GetMapping("/annually")
+    ResponseEntity<List<Object[]>> annually(@RequestParam Integer start,
+                                            @RequestParam Integer end);
 
 }

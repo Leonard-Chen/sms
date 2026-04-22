@@ -22,11 +22,11 @@ public class StatisticsController {
 
     private final StatisticsService statisticsService;
 
-    @Operation(summary = "核心指标", description = "获取核心业务数据，如订单数量、营业额等")
+    @Operation(summary = "核心指标", description = "获取当年或某一年的核心业务数据，如订单数量、营业额等")
     @GetMapping("/core")
-    public ResponseEntity<?> getData() {
+    public ResponseEntity<?> getData(@RequestParam(required = false) Integer year) {
         try {
-            return ResponseEntity.ok(statisticsService.getStatistics());
+            return ResponseEntity.ok(statisticsService.getStatistics(year));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
@@ -34,9 +34,9 @@ public class StatisticsController {
 
     @Operation(summary = "订单数据", description = "获取各类订单的数据，用于计算不同类型订单的比例")
     @GetMapping("/order")
-    public ResponseEntity<?> getOrderData() {
+    public ResponseEntity<?> getOrderData(@RequestParam(required = false) Integer year) {
         try {
-            return ResponseEntity.ok(statisticsService.getOrderStatistics());
+            return ResponseEntity.ok(statisticsService.getOrderStatistics(year));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
@@ -47,6 +47,17 @@ public class StatisticsController {
     public ResponseEntity<?> getMonthlyData(@RequestParam Integer year) {
         try {
             return ResponseEntity.ok(statisticsService.getMonthlyStatistics(year));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "年度数据", description = "获取企业往年的数据，包括每年的累计订单数和营业额")
+    @GetMapping("/annually")
+    public ResponseEntity<?> getAnnuallyData(@RequestParam Integer start,
+                                             @RequestParam Integer end) {
+        try {
+            return ResponseEntity.ok(statisticsService.getAnnuallyStatistics(start, end));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }

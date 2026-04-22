@@ -2,12 +2,15 @@ package com.gdut.sms.order.service;
 
 import feign.FeignException;
 import com.gdut.sms.common.dto.*;
+import jakarta.annotation.Nullable;
 import com.gdut.sms.common.entity.*;
 import lombok.RequiredArgsConstructor;
 import com.gdut.sms.common.utils.RandomUUID;
 import org.springframework.stereotype.Service;
+import com.gdut.sms.common.utils.DateTimeUtils;
 import org.springframework.http.ResponseEntity;
 import com.gdut.sms.common.feign.EmployeeClient;
+import org.springframework.cache.annotation.Caching;
 import com.gdut.sms.order.repository.OrderRepository;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -34,7 +37,7 @@ public class OrderService {
 
     private final EmployeeClient employeeClient;
 
-    @Cacheable(value = "order_list", key = "0", unless = "#result == null || #result.empty")
+    @Cacheable(value = "order_list", key = "#username", unless = "#result == null || #result.empty")
     public List<OrderDTO> list(String username, String deptNo, List<String> authorities) {
         Set<String> roles = new HashSet<>(authorities);
 
@@ -59,39 +62,68 @@ public class OrderService {
                 .toList();
     }
 
-    @Cacheable(value = "order_count", key = "0", unless = "#result == null")
-    public Long count() {
-        return orderRepository.count();
+    public Long count(@Nullable Integer year) {
+        return year == null
+                ? orderRepository.count()
+                : orderRepository.countByCreateTimeBetween(
+                    DateTimeUtils.firstTimeOfTheYear(year),
+                    DateTimeUtils.lastTimeOfTheYear(year)
+        );
     }
 
-    @Cacheable(value = "order_count", key = "'finished'", unless = "#result == null")
-    public Long countFinishedOrders() {
-        return orderRepository.countByOrderStatus(2);
+    public Long countFinishedOrders(@Nullable Integer year) {
+        return countByStatusAndYear(2, year);
     }
 
-    @Cacheable(value = "order_count", key = "'pending'", unless = "#result == null")
-    public Long countPendingOrders() {
-        return orderRepository.countByOrderStatus(3);
+    public Long countPendingOrders(@Nullable Integer year) {
+        return countByStatusAndYear(3, year);
     }
 
-    @Cacheable(value = "order_count", key = "'audit'", unless = "#result == null")
-    public Long countOrdersToBeAudited() {
-        return orderRepository.countByOrderStatus(1);
+    public Long countOrdersToBeAudited(@Nullable Integer year) {
+        return countByStatusAndYear(1, year);
     }
 
-    @Cacheable(value = "order_count", key = "'canceled'", unless = "#result == null")
-    public Long countCanceledOrders() {
-        return orderRepository.countByOrderStatus(5);
+    public Long countCanceledOrders(@Nullable Integer year) {
+        return countByStatusAndYear(5, year);
     }
 
-    @Cacheable(value = "order_amount", key = "0", unless = "#result == null")
+    private Long countByStatusAndYear(Integer status, @Nullable Integer year) {
+        return year == null
+                ? orderRepository.countByOrderStatus(status)
+                : orderRepository.countByOrderStatusAndCreateTimeBetween(
+                    status,
+                    DateTimeUtils.firstTimeOfTheYear(year),
+                    DateTimeUtils.lastTimeOfTheYear(year)
+        );
+    }
+
+    @Cacheable(value = "order_amount", key = "T(com.gdut.sms.common.utils.DateTimeUtils).toTimestamp(#start)" +
+            "+ '::' +" +
+            "T(com.gdut.sms.common.utils.DateTimeUtils).toTimestamp(#end)",
+            unless = "#result == null")
     public BigDecimal sumAmountBetween(LocalDateTime start, LocalDateTime end) {
-        return orderRepository.sumAmountByCreateTimeBetween(start, end);
+        return start == null
+                ? (end == null
+                    ? orderRepository.sumAmount()
+                    : orderRepository.sumAmountByCreateTimeBefore(end))
+                : (end == null
+                    ? orderRepository.sumAmountByCreateTimeAfter(start)
+                    : orderRepository.sumAmountByCreateTimeBetween(start, end)
+        );
     }
 
-    @Cacheable(value = "monthly_stats", key = "#year", unless = "#result == null || #result.empty")
+    /**
+     * 统计服务模块调用
+     */
     public List<Object[]> getMonthlyStatistics(Integer year) {
         return orderRepository.getMonthlyStatistics(year);
+    }
+
+    /**
+     * 统计服务模块调用
+     */
+    public List<Object[]> getAnnuallyStatistics(Integer start, Integer end) {
+        return orderRepository.getAnnuallyStatistics(start, end);
     }
 
 
@@ -112,7 +144,12 @@ public class OrderService {
     }
 
     @Transactional
-    @CacheEvict(value = "order_list", allEntries = true)
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "order_list", allEntries = true),
+                    @CacheEvict(value = "order_amount", allEntries = true)
+            }
+    )
     public OrderDTO create(OrderDTO dto, String username) {
         String no;
         do {
@@ -134,7 +171,10 @@ public class OrderService {
     @Transactional
     @Caching(
             put = @CachePut(value = "order", key = "#dto.orderNo"),
-            evict = @CacheEvict(value = "order_list", allEntries = true)
+            evict = {
+                    @CacheEvict(value = "order_list", allEntries = true),
+                    @CacheEvict(value = "order_amount", allEntries = true)
+            }
     )
     public OrderDTO update(OrderDTO dto) {
         Order order = orderRepository.findByOrderNo(dto.getOrderNo())
@@ -152,7 +192,10 @@ public class OrderService {
     @Transactional
     @Caching(
             put = @CachePut(value = "order", key = "#orderNo"),
-            evict = @CacheEvict(value = "order_list", allEntries = true)
+            evict = {
+                    @CacheEvict(value = "order_list", allEntries = true),
+                    @CacheEvict(value = "order_amount", allEntries = true)
+            }
     )
     public OrderDTO audit(String orderNo, Integer status, String remarks, String username) {
         Order order = orderRepository.findByOrderNo(orderNo)
@@ -178,7 +221,8 @@ public class OrderService {
     @Caching(
             evict = {
                     @CacheEvict(value = "order", key = "#no"),
-                    @CacheEvict(value = "order_list", allEntries = true)
+                    @CacheEvict(value = "order_list", allEntries = true),
+                    @CacheEvict(value = "order_amount", allEntries = true)
             }
     )
     public void delete(String no) {

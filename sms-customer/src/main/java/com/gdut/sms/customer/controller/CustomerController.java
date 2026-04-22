@@ -81,12 +81,12 @@ public class CustomerController {
         }
     }
 
-    @Operation(summary = "统计客户", description = "统计客户总数")
+    @Operation(summary = "统计客户", description = "统计全部或某一年内的客户总数")
     @GetMapping("/count")
     @OperationLogging(module = "客户管理", type = "查询", desc = "统计客户数量")
-    public ResponseEntity<?> count() {
+    public ResponseEntity<?> count(@RequestParam(required = false) Integer year) {
         try {
-            return ResponseEntity.ok(customerService.count());
+            return ResponseEntity.ok(customerService.count(year));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }

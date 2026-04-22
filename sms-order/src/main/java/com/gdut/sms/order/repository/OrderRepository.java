@@ -33,6 +33,8 @@ public interface OrderRepository extends JpaRepository<Order, String>, JpaSpecif
 
     Long countByOrderStatus(Integer status);
 
+    Long countByOrderStatusAndCreateTimeBetween(Integer status, LocalDateTime from, LocalDateTime to);
+
     //统计指定时间段的订单总数
     @Query("SELECT COUNT(o) FROM Order o WHERE o.createTime BETWEEN :start AND :end")
     Long countByCreateTimeBetween(LocalDateTime start, LocalDateTime end);
@@ -41,8 +43,22 @@ public interface OrderRepository extends JpaRepository<Order, String>, JpaSpecif
     @Query("SELECT SUM(o.orderAmount) FROM Order o WHERE o.createTime BETWEEN :start AND :end")
     BigDecimal sumAmountByCreateTimeBetween(LocalDateTime start, LocalDateTime end);
 
+    @Query("SELECT SUM(o.orderAmount) FROM Order o WHERE o.createTime > :time")
+    BigDecimal sumAmountByCreateTimeAfter(LocalDateTime time);
+
+    @Query("SELECT SUM(o.orderAmount) FROM Order o WHERE o.createTime < :time")
+    BigDecimal sumAmountByCreateTimeBefore(LocalDateTime time);
+
+    @Query("SELECT SUM(o.orderAmount) FROM Order o")
+    BigDecimal sumAmount();
+
     //按月统计订单数和营收
     @Query("SELECT MONTH(o.createTime), COUNT(o), SUM(o.orderAmount) FROM Order o " +
             "WHERE YEAR(o.createTime) = :year GROUP BY MONTH(o.createTime) ORDER BY MONTH(o.createTime)")
     List<Object[]> getMonthlyStatistics(Integer year);
+
+    //按年统计订单数和营收
+    @Query("SELECT COUNT(o), SUM(o.orderAmount) FROM Order o WHERE YEAR(o.createTime) " +
+            "BETWEEN :start AND :end GROUP BY YEAR(o.createTime) ORDER BY YEAR(o.createTime)")
+    List<Object[]> getAnnuallyStatistics(Integer start, Integer end);
 }
