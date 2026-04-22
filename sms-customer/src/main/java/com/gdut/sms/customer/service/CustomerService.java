@@ -38,6 +38,7 @@ public class CustomerService {
     }
 
     @Transactional
+    @CacheEvict(value = "customer_list", allEntries = true)
     public CustomerDTO create(CustomerDTO dto, String username) {
         String no;
         do {
