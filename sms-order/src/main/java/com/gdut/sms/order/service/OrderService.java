@@ -168,7 +168,12 @@ public class OrderService {
     }
 
     @Transactional
-    @CacheEvict(value = "order", key = "#no")
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "order", key = "#no"),
+                    @CacheEvict(value = "order_list", allEntries = true)
+            }
+    )
     public void delete(String no) {
         orderRepository.deleteByOrderNo(no);
     }
