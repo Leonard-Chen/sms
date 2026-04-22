@@ -167,6 +167,7 @@ public class OrderService {
         return new OrderDTO(orderRepository.save(order));
     }
 
+    @Transactional
     @CacheEvict(value = "order", key = "#no")
     public void delete(String no) {
         orderRepository.deleteByOrderNo(no);
