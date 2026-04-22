@@ -36,7 +36,6 @@ public class DeptService {
     }
 
     @Transactional
-    @Cacheable(value = "dept", key = "#result.deptNo", unless = "#result == null")
     public DeptDTO create(DeptDTO dto, String username) {
         String no;
         do {

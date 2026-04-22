@@ -30,11 +30,6 @@ public class CustomerService {
                 .toList();
     }
 
-    @Cacheable(value = "customer_count", key = "0", unless = "#result == null")
-    public Long count() {
-        return customerRepository.count();
-    }
-
     @Cacheable(value = "customer", key = "#customerNo", unless = "#result == null")
     public CustomerDTO get(String customerNo) {
         return new CustomerDTO(customerRepository.findByCustomerNo(customerNo)
@@ -43,7 +38,6 @@ public class CustomerService {
     }
 
     @Transactional
-    @Cacheable(value = "customer", key = "#result.customerNo")
     public CustomerDTO create(CustomerDTO dto, String username) {
         String no;
         do {
