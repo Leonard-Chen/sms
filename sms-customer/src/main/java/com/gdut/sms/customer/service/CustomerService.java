@@ -63,6 +63,7 @@ public class CustomerService {
         return new CustomerDTO(customerRepository.save(new Customer(dto)));
     }
 
+    @Transactional
     @CacheEvict(value = "customer", key = "#customerNo")
     public void delete(String customerNo) {
         customerRepository.deleteByCustomerNo(customerNo);
