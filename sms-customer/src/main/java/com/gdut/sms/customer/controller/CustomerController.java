@@ -57,6 +57,18 @@ public class CustomerController {
         }
     }
 
+    @Operation(summary = "更新客户", description = "更新某个客户的信息")
+    @PutMapping("/{no}")
+    @OperationLogging(module = "客户管理", type = "更新", desc = "更新客户信息")
+    public ResponseEntity<?> update(@PathVariable String no,
+                                    @RequestBody CustomerDTO dto) {
+        try {
+            return ResponseEntity.ok(customerService.update(dto));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
     @Operation(summary = "删除客户", description = "删除某个客户")
     @DeleteMapping("/{no}")
     @OperationLogging(module = "客户管理", type = "删除", desc = "删除客户信息")
