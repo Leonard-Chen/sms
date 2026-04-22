@@ -40,25 +40,30 @@ public interface OrderRepository extends JpaRepository<Order, String>, JpaSpecif
     Long countByCreateTimeBetween(LocalDateTime start, LocalDateTime end);
 
     //统计指定时间段的营收
-    @Query("SELECT SUM(o.orderAmount) FROM Order o WHERE o.createTime BETWEEN :start AND :end")
+    @Query("SELECT SUM(o.orderAmount) FROM Order o WHERE o.createTime BETWEEN :start AND :end " +
+            "AND o.orderStatus = 2")
     BigDecimal sumAmountByCreateTimeBetween(LocalDateTime start, LocalDateTime end);
 
-    @Query("SELECT SUM(o.orderAmount) FROM Order o WHERE o.createTime > :time")
+    @Query("SELECT SUM(o.orderAmount) FROM Order o WHERE o.createTime > :time " +
+            "AND o.orderStatus = 2")
     BigDecimal sumAmountByCreateTimeAfter(LocalDateTime time);
 
-    @Query("SELECT SUM(o.orderAmount) FROM Order o WHERE o.createTime < :time")
+    @Query("SELECT SUM(o.orderAmount) FROM Order o WHERE o.createTime < :time " +
+            "AND o.orderStatus = 2")
     BigDecimal sumAmountByCreateTimeBefore(LocalDateTime time);
 
-    @Query("SELECT SUM(o.orderAmount) FROM Order o")
+    @Query("SELECT SUM(o.orderAmount) FROM Order o WHERE o.orderStatus = 2")
     BigDecimal sumAmount();
 
     //按月统计订单数和营收
-    @Query("SELECT MONTH(o.createTime), COUNT(o), SUM(o.orderAmount) FROM Order o " +
+    @Query("SELECT MONTH(o.createTime), COUNT(o), SUM(CASE WHEN o.orderStatus = 2 THEN o.orderAmount ELSE 0 END) " +
+            "FROM Order o " +
             "WHERE YEAR(o.createTime) = :year GROUP BY MONTH(o.createTime) ORDER BY MONTH(o.createTime)")
     List<Object[]> getMonthlyStatistics(Integer year);
 
     //按年统计订单数和营收
-    @Query("SELECT COUNT(o), SUM(o.orderAmount) FROM Order o WHERE YEAR(o.createTime) " +
+    @Query("SELECT COUNT(o), SUM(CASE WHEN o.orderStatus = 2 THEN o.orderAmount ELSE 0 END) " +
+            "FROM Order o WHERE YEAR(o.createTime) " +
             "BETWEEN :start AND :end GROUP BY YEAR(o.createTime) ORDER BY YEAR(o.createTime)")
     List<Object[]> getAnnuallyStatistics(Integer start, Integer end);
 }
