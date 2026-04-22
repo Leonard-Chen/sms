@@ -76,6 +76,7 @@ public class EmployeeService {
         return new EmployeeDTO(employeeRepository.save(employee));
     }
 
+    @Transactional
     @CacheEvict(value = "employee", key = "#no")
     public void delete(String no) {
         employeeRepository.deleteByEmployeeNo(no);
