@@ -165,6 +165,7 @@ CREATE TABLE `sms_customer`
     PRIMARY KEY (`customer_no`),
     KEY `idx_customer_name` (`customer_name`),
     KEY `idx_created_by` (`created_by`),
+    KEY `idx_follow_up_status` (`follow_up_status`),
     CONSTRAINT `chk_customer_no` CHECK (`customer_no` LIKE 'C%'),
     CONSTRAINT `fk_customer_created_by` FOREIGN KEY (`created_by`) REFERENCES `sys_user` (`username`) ON DELETE SET NULL
 ) ENGINE = InnoDB
@@ -191,6 +192,7 @@ CREATE TABLE `sms_order`
     KEY `idx_customer_no` (`customer_no`),
     KEY `idx_created_by` (`created_by`),
     KEY `idx_audit_by` (`audited_by`),
+    KEY `idx_order_status` (`order_status`),
     CONSTRAINT `chk_order_no` CHECK (`order_no` LIKE 'O%'),
     CONSTRAINT `fk_order_customer` FOREIGN KEY (`customer_no`) REFERENCES `sms_customer` (`customer_no`),
     CONSTRAINT `fk_order_created_by` FOREIGN KEY (`created_by`) REFERENCES `sys_user` (`username`) ON DELETE SET NULL,
@@ -211,7 +213,8 @@ CREATE TABLE `sms_employee`
     `created_by`    CHAR(20)     DEFAULT NULL COMMENT '创建人',
     `create_time`   DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     PRIMARY KEY (`employee_no`),
-    KEY (`employee_name`),
+    KEY `idx_employee_name` (`employee_name`),
+    KEY `idx_work_status` (`work_status`),
     CONSTRAINT `chk_employee_no` CHECK (`employee_no` LIKE 'E%'),
     CONSTRAINT `fk_employee_dept` FOREIGN KEY (`dept_no`) REFERENCES sms_dept (`dept_no`) ON DELETE SET NULL,
     CONSTRAINT `fk_employee_created_by` FOREIGN KEY (`created_by`) REFERENCES `sys_user` (`username`) ON DELETE SET NULL
@@ -233,6 +236,7 @@ CREATE TABLE `sms_schedule`
     KEY `idx_order_no` (`order_no`),
     KEY `idx_staff_no` (`staff_no`),
     KEY `idx_schedule_time` (`schedule_time`),
+    KEY `idx_schedule_status` (`schedule_status`),
     CONSTRAINT `chk_schedule_no` CHECK (`schedule_no` LIKE 'S%'),
     CONSTRAINT `fk_schedule_order` FOREIGN KEY (`order_no`) REFERENCES `sms_order` (`order_no`),
     CONSTRAINT `fk_schedule_staff` FOREIGN KEY (`staff_no`) REFERENCES `sms_employee` (`employee_no`),
