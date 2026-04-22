@@ -112,6 +112,7 @@ public class OrderService {
     }
 
     @Transactional
+    @CacheEvict(value = "order_list", allEntries = true)
     public OrderDTO create(OrderDTO dto, String username) {
         String no;
         do {
