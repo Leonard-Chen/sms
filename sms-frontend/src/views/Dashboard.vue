@@ -68,7 +68,7 @@ import {ref, onMounted, onUnmounted} from 'vue'
 const coreData = ref([
   {title: '累计客户数', value: 0},
   {title: '累计订单数', value: 0},
-  {title: '本月营收', value: '0 元'},
+  {title: '当年营收', value: '0 元'},
   {title: '订单完成率', value: '0%'}
 ])
 
