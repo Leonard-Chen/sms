@@ -58,7 +58,10 @@ public class EmployeeService {
     }
 
     @Transactional
-    @CachePut(value = "employee", key = "#dto.employeeNo")
+    @Caching(
+            put = @CachePut(value = "employee", key = "#dto.employeeNo"),
+            evict = @CacheEvict(value = "employee_list", allEntries = true)
+    )
     public EmployeeDTO update(EmployeeDTO dto) {
         employeeRepository.findByEmployeeNo(dto.getEmployeeNo())
                 .orElseThrow(() -> new RuntimeException("员工不存在"));
