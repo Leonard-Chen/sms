@@ -48,6 +48,7 @@ public class UserService implements UserDetailsService {
                 .toList();
     }
 
+    @Transactional
     @CacheEvict(value = "user", key = "#username")
     public void delete(String username) {
         userRepository.deleteByUsername(username);
