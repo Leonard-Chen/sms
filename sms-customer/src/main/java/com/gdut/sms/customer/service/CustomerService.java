@@ -54,6 +54,15 @@ public class CustomerService {
         return new CustomerDTO(customerRepository.save(customer));
     }
 
+    @Transactional
+    @CachePut(value = "customer", key = "#dto.customerNo")
+    public CustomerDTO update(CustomerDTO dto) {
+        Customer customer = customerRepository.findByCustomerNo(dto.getCustomerNo())
+                .orElseThrow(() -> new RuntimeException("客户不存在"));
+
+        return new CustomerDTO(customerRepository.save(new Customer(dto)));
+    }
+
     @CacheEvict(value = "customer", key = "#customerNo")
     public void delete(String customerNo) {
         customerRepository.deleteByCustomerNo(customerNo);
