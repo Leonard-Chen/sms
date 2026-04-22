@@ -55,7 +55,10 @@ public class CustomerService {
     }
 
     @Transactional
-    @CachePut(value = "customer", key = "#dto.customerNo")
+    @Caching(
+            put = @CachePut(value = "customer", key = "#dto.customerNo"),
+            evict = @CacheEvict(value = "customer_list", allEntries = true)
+    )
     public CustomerDTO update(CustomerDTO dto) {
         Customer customer = customerRepository.findByCustomerNo(dto.getCustomerNo())
                 .orElseThrow(() -> new RuntimeException("客户不存在"));
