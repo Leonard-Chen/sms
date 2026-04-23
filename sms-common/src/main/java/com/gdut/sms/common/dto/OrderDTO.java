@@ -28,6 +28,7 @@ public class OrderDTO {
     private String createdBy;
     private String auditedBy;
     private String customerNo;
+    private String deptNo;
 
     public OrderDTO(Order order) {
         orderNo = order.getOrderNo();
@@ -46,5 +47,6 @@ public class OrderDTO {
         createdBy = order.getCreatedBy().getUsername();
         auditedBy = order.getAuditedBy() != null ? order.getAuditedBy().getUsername() : null;
         customerNo = order.getCustomer() != null ? order.getCustomer().getCustomerNo() : null;
+        deptNo = order.getDept() != null ? order.getDept().getDeptNo() : null;
     }
 }
