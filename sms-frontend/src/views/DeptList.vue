@@ -161,7 +161,10 @@ const handleSubmit = async () => {
   saving.value = true
   try {
     if (dialogMode.value === 'create') {
-      await request.post('/api/dept/', {deptName: form.value.deptName})
+      await request.post('/api/dept/', {
+        deptName: form.value.deptName,
+        status: form.value.status
+      })
       ElMessage.success('创建成功')
       dialogVisible.value = false
       await getList()
