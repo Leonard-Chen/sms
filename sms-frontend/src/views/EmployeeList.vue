@@ -267,7 +267,7 @@ const handleSubmit = async () => {
       await getList()
       return
     }
-    await request.put(`/api/employee/${form.value.employeeNo}`, payload)
+    await request.put('/api/employee/', payload)
     ElMessage.success('更新成功')
     dialogVisible.value = false
     await getList()
