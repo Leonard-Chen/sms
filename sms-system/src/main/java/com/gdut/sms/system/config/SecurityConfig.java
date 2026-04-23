@@ -170,7 +170,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 //登出处理
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/auth/logout")
+                        .logoutUrl("/logout")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .deleteCookies("JSESSIONID")
