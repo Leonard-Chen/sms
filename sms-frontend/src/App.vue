@@ -121,22 +121,15 @@ const handleLogout = async () => {
           type: "warning"
         }
     )
-    await request.post('/api/auth/logout');
-    const refreshToken = localStorage.getItem('refresh_token')
-    await request.post('/api/oauth2/revoke', null, {
-      params: {
-        'token': refreshToken,
-        'token_type_hint': 'refresh_token',
-        'client_id': 'sms-client'
-      },
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    })
+
+    await request.post('/api/logout')
+
     ElMessage.success('登出成功')
 
     setTimeout(() => {
       localStorage.clear()
       delete request.defaults.headers.common['Authorization']
-      window.location.href = '/login'
+      window.location.href = '/'
     }, 1000)
 
   } catch (e) {
