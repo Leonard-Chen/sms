@@ -4,6 +4,8 @@ import lombok.Data;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 import com.gdut.sms.common.dto.DeptDTO;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +13,8 @@ import java.time.LocalDateTime;
 @Table(name = "sms_dept")
 @Data
 @NoArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+@JsonTypeName("com.gdut.sms.common.entity.Department")
 public class Department {
 
     @Id
