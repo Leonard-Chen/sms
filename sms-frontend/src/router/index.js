@@ -16,12 +16,16 @@ const routes = [
     {path: '/home', component: Home},
     {path: '/login', component: Login},
     {path: '/callback', component: Callback},
-    {path: '/order', component: OrderList, meta: {requiresAuth: true}},
-    {path: '/customer', component: CustomerList, meta: {requiresAuth: true}},
-    {path: '/employee', component: EmployeeList, meta: {requiresAuth: true}},
-    {path: '/dept', component: DeptList, meta: {requiresAuth: true}},
-    {path: '/dashboard', component: Dashboard, meta: {requiresAuth: true}},
-    {path: '/user', component: UserList, meta: {requiresAuth: true}},
+    {path: '/order', component: OrderList, meta: {requiresAuth: true, roles: ['OWNER', 'MANAGER', 'ADMIN', 'USER']}},
+    {
+        path: '/customer',
+        component: CustomerList,
+        meta: {requiresAuth: true, roles: ['OWNER', 'MANAGER', 'ADMIN', 'USER']}
+    },
+    {path: '/employee', component: EmployeeList, meta: {requiresAuth: true, roles: ['OWNER', 'MANAGER', 'ADMIN']}},
+    {path: '/dept', component: DeptList, meta: {requiresAuth: true, roles: ['OWNER', 'ADMIN']}},
+    {path: '/dashboard', component: Dashboard, meta: {requiresAuth: true, roles: ['OWNER', 'MANAGER', 'ADMIN']}},
+    {path: '/user', component: UserList, meta: {requiresAuth: true, roles: ['ADMIN']}},
 ]
 
 //动态路由，根据权限加载
