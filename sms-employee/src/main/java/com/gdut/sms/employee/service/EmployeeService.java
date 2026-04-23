@@ -1,5 +1,6 @@
 package com.gdut.sms.employee.service;
 
+import com.gdut.sms.common.entity.Department;
 import lombok.RequiredArgsConstructor;
 import com.gdut.sms.common.entity.User;
 import com.gdut.sms.common.entity.Employee;
@@ -50,8 +51,12 @@ public class EmployeeService {
         User user = new User();
         user.setUsername(username);
 
+        Department dept = new Department();
+        dept.setDeptNo(dto.getDeptNo());
+
         Employee employee = new Employee(dto);
         employee.setEmployeeNo(no);
+        employee.setDept(dept);
         employee.setCreatedBy(user);
         employee.setCreateTime(LocalDateTime.now());
 
