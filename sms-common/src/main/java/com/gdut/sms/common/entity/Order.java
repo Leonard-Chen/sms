@@ -64,7 +64,6 @@ public class Order {
         serviceType = dto.getServiceType();
         serviceContent = dto.getServiceContent();
         orderAmount = dto.getOrderAmount();
-        orderStatus = dto.getOrderStatus();
         expectedTime = dto.getExpectedTime();
         serviceTime = dto.getServiceTime();
         serviceAddress = dto.getServiceAddress();
