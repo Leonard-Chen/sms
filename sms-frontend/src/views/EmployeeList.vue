@@ -71,9 +71,6 @@
 
   <el-dialog v-model="dialogVisible" :title="dialogMode === 'create' ? '新增员工' : '编辑员工'" width="620px">
     <el-form :model="form" label-width="90px">
-      <el-form-item label="员工编号" v-if="dialogMode === 'edit'">
-        <el-input v-model="form.employeeNo" disabled/>
-      </el-form-item>
       <el-form-item label="姓名" required>
         <el-input v-model="form.employeeName" placeholder="请输入员工姓名"/>
       </el-form-item>
@@ -254,7 +251,6 @@ const handleSubmit = async () => {
   saving.value = true
   try {
     const payload = {
-      employeeNo: form.value.employeeNo,
       employeeName: form.value.employeeName,
       deptNo: form.value.deptNo,
       position: form.value.position,
