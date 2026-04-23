@@ -31,7 +31,7 @@ public class Customer {
     private Integer followUpStatus;     //跟进状态 (1待跟进/2已跟进/3无需跟进)
 
     @ManyToOne
-    @JoinColumn(name = "created_by", insertable = false, updatable = false)
+    @JoinColumn(name = "created_by", updatable = false)
     private User createdBy;             //创建人
 
     private LocalDateTime createTime;   //创建时间

@@ -17,11 +17,11 @@ public class ServiceSchedule {
     private String scheduleNo;          //调度号
 
     @OneToOne
-    @JoinColumn(name = "order_no", insertable = false, updatable = false)
+    @JoinColumn(name = "order_no", updatable = false)
     private Order order;                //订单
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "staff_no", referencedColumnName = "employee_no", insertable = false, updatable = false)
+    @JoinColumn(name = "staff_no", referencedColumnName = "employee_no", updatable = false)
     private Employee staff;             //服务人员
 
     private Byte scheduleStatus;        //状态 (1待执行/2执行中/3已完成/4异常)
@@ -33,7 +33,7 @@ public class ServiceSchedule {
     private LocalDateTime completeTime; //完成时间
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "scheduled_by", insertable = false, updatable = false)
+    @JoinColumn(name = "scheduled_by", updatable = false)
     private User scheduledBy;           //调度人
 
     private String remarks;             //备注

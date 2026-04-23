@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "employee_no")
     private String employeeNo;          //员工编号
 
@@ -36,7 +35,7 @@ public class Employee {
     private LocalDate hiredDate;        //入职日期
 
     @ManyToOne
-    @JoinColumn(name = "created_by", insertable = false, updatable = false)
+    @JoinColumn(name = "created_by", updatable = false)
     private User createdBy;             //创建人
 
     private LocalDateTime createTime;   //创建时间
