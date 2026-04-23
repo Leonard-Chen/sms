@@ -33,7 +33,7 @@ public class Order {
     @Column(name = "order_amount", precision = 10, scale = 2)
     private BigDecimal orderAmount;     //订单金额
 
-    private Integer orderStatus;        //订单状态 (1待审核/2已生效/3服务中/4已完成/5已取消/6异常)
+    private Integer orderStatus;        //订单状态 (1待审核/2已生效/3服务中/4已完成/5已取消/6异常/7待分派/8待完成)
 
     private LocalDateTime expectedTime; //期望服务时间
 
