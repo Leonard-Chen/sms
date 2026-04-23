@@ -159,12 +159,16 @@ public class OrderService {
         User user = new User();
         user.setUsername(username);
 
+        Customer customer = new Customer();
+        customer.setCustomerNo(dto.getCustomerNo());
+
         Department dept = new Department();
         dept.setDeptNo(dto.getDeptNo());
 
         Order order = new Order(dto);
 
         order.setOrderNo(no);
+        order.setCustomer(customer);
         order.setDept(dept);
         order.setCreatedBy(user);
         order.setCreateTime(LocalDateTime.now());
