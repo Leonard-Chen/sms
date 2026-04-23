@@ -143,7 +143,7 @@
     <!-- 【新增订单】或【编辑订单】弹窗 -->
     <el-dialog v-model="dialogVisible" :title="dialogMode === 'create' ? '新增员工' : '编辑员工'" width="520px">
       <el-form :model="form" label-width="100px">
-        <el-form-item label="订单编号" v-if="dialogVisible === 'edit'">
+        <el-form-item label="订单编号" v-if="dialogMode === 'edit'">
           <el-input v-model="form.orderNo" disabled/>
         </el-form-item>
         <el-form-item label="选择客户" required>
