@@ -34,6 +34,7 @@ public class Department {
     public void copyFrom(DeptDTO dto) {
         deptNo = dto.getDeptNo();
         deptName = dto.getDeptName();
+        status = dto.getStatus();
     }
 
 }

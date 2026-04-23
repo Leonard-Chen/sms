@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class DeptDTO {
     private String deptNo;
     private String deptName;
+    private Integer status;
 
     private String createdBy;
     private LocalDateTime createTime;
@@ -20,6 +21,7 @@ public class DeptDTO {
     public DeptDTO(Department dept) {
         deptNo = dept.getDeptNo();
         deptName = dept.getDeptName();
+        status = dept.getStatus();
         createdBy = dept.getCreatedBy().getUsername();
         createTime = dept.getCreateTime();
     }
