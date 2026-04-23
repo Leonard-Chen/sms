@@ -140,12 +140,15 @@
       </div>
     </el-card>
 
-    <!-- 【新增订单】弹窗 -->
-    <el-dialog v-model="createDialogVisible" title="新增订单" width="520px">
-      <el-form :model="createForm" label-width="100px">
+    <!-- 【新增订单】或【编辑订单】弹窗 -->
+    <el-dialog v-model="dialogVisible" :title="dialogMode === 'create' ? '新增员工' : '编辑员工'" width="520px">
+      <el-form :model="form" label-width="100px">
+        <el-form-item label="订单编号" v-if="dialogVisible === 'edit'">
+          <el-input v-model="editForm.orderNo" disabled/>
+        </el-form-item>
         <el-form-item label="选择客户" required>
           <el-select
-              v-model="createForm.customerNo"
+              v-model="form.customerNo"
               filterable
               clearable
               placeholder="请选择客户（可搜索编号/姓名/电话）"
@@ -160,9 +163,26 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="选择部门" v-if="isDeptOptionsEnabled()" required>
+          <el-select
+              v-model="form.deptNo"
+              filterable
+              clearable
+              placeholder="请选择部门（可搜索部门号/名称）"
+              style="width: 100%"
+              :loading="deptLoading"
+          >
+            <el-option
+                v-for="d in deptOptions"
+                :key="d.deptNo"
+                :label="`${d.deptName} (${d.deptNo})`"
+                :value="d.deptNo"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="服务类型" required>
           <el-select
-              v-model="createForm.serviceType"
+              v-model="form.serviceType"
               filterable
               clearable
               placeholder="请选择服务类型"
@@ -173,7 +193,7 @@
         </el-form-item>
         <el-form-item label="服务内容" required>
           <el-select
-              v-model="createForm.serviceContent"
+              v-model="form.serviceContent"
               filterable
               clearable
               allow-create
@@ -185,26 +205,26 @@
           </el-select>
         </el-form-item>
         <el-form-item label="金额" required>
-          <el-input-number v-model="createForm.orderAmount" :min="0" :precision="2"/>
+          <el-input-number v-model="form.orderAmount" :min="0" :precision="2"/>
         </el-form-item>
         <el-form-item label="期望服务时间" required>
           <el-date-picker
-              v-model="createForm.expectedTime"
+              v-model="form.expectedTime"
               type="datetime"
               placeholder="选择时间"
               style="width: 100%"
           />
         </el-form-item>
         <el-form-item label="服务地址">
-          <el-input v-model="createForm.serviceAddress"/>
+          <el-input v-model="form.serviceAddress"/>
         </el-form-item>
         <el-form-item label="备注">
-          <el-input v-model="createForm.remarks" type="textarea" :rows="2"/>
+          <el-input v-model="form.remarks" type="textarea" :rows="2"/>
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="createDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleCreate">确定</el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleSubmit">确定</el-button>
       </template>
     </el-dialog>
 
@@ -315,6 +335,7 @@
 
 <script setup>
 import request from '../utils/request'
+import {getUser} from '../utils/user.js'
 import {ElMessage, ElMessageBox} from 'element-plus'
 import {ref, reactive, onMounted, watch, computed} from 'vue'
 
@@ -372,14 +393,16 @@ const showPendingSchedule = () => {
   page.value = 1
 }
 
-//控制弹窗
-const createDialogVisible = ref(false)
 const auditDialogVisible = ref(false)
-const editDialogVisible = ref(false)
 const scheduleDialogVisible = ref(false)
 
-//表单
-const createForm = reactive({
+const dialogVisible = ref(false)
+const dialogMode = ref('create') // create | edit
+const saving = ref(false)
+
+//【新增】和【编辑】共用一个表单
+const form = reactive({
+  orderNo: '',
   customerNo: '',
   serviceType: '',
   serviceContent: '',
@@ -391,6 +414,9 @@ const createForm = reactive({
 
 const customerOptions = ref([])
 const customerLoading = ref(false)
+
+const deptOptions = ref([])
+const deptLoading = ref(false)
 
 const serviceTypeOptions = [
   '家政',
@@ -411,7 +437,7 @@ const serviceContentPresets = {
 }
 
 const serviceContentOptions = computed(() => {
-  const t = createForm.serviceType
+  const t = form.serviceType
   return t && serviceContentPresets[t] ? serviceContentPresets[t] : []
 })
 
@@ -424,17 +450,6 @@ const auditForm = reactive({
   remarks: ''
 })
 
-//订单编辑表单
-const editForm = reactive({
-  orderNo: '',
-  serviceType: '',
-  serviceContent: '',
-  orderAmount: 0,
-  expectedTime: null,
-  serviceAddress: '',
-  remarks: ''
-})
-
 //订单调度表单
 const scheduleForm = reactive({
   orderNo: '',
@@ -443,9 +458,7 @@ const scheduleForm = reactive({
 })
 const recommendList = ref([])
 
-//加载
 const auditLoading = ref(false)
-const editLoading = ref(false)
 const scheduleLoading = ref(false)
 
 const getStatusType = (status) => {
@@ -480,16 +493,15 @@ const getList = async () => {
   }
 }
 
-//=====【新增订单】=====
-const openCreateDialog = async () => {
-  Object.assign(createForm, {
-    customerNo: '',
-    serviceType: '',
-    serviceContent: '',
-    orderAmount: 0,
-    expectedTime: null,
-    serviceAddress: ''
-  })
+const user = getUser()
+
+//只有管理员、企业负责人能手动为指定部门创建订单
+//部门经理、业务人员只能为本部门创建订单
+const isDeptOptionsEnabled = () => {
+  return user?.roles.some(r => ['ADMIN', 'OWNER'].includes(r))
+}
+
+const loadOptions = async () => {
   if (!customerOptions.value.length) {
     customerLoading.value = true
     try {
@@ -501,40 +513,84 @@ const openCreateDialog = async () => {
       customerLoading.value = false
     }
   }
-  createDialogVisible.value = true
+
+  if (isDeptOptionsEnabled() && !deptOptions.value.length) {
+    deptLoading.value = true
+    try {
+      deptOptions.value = await request.get('/api/dept/') || []
+    } catch (e) {
+      console.error(e)
+      ElMessage.error('获取部门列表失败，' + (e.response?.data?.message || e))
+    } finally {
+      deptLoading.value = false
+    }
+  }
 }
 
-const handleCreate = async () => {
-  if (!createForm.customerNo) {
+//=====【新增订单】=====
+const openCreateDialog = async () => {
+  dialogMode.value = 'create'
+  Object.assign(form, {
+    customerNo: '',
+    deptNo: isDeptOptionsEnabled() ? '' : (user?.dept?.deptNo || ''),
+    serviceType: '',
+    serviceContent: '',
+    orderAmount: 0,
+    expectedTime: null,
+    serviceAddress: ''
+  })
+  await loadOptions()
+  dialogVisible.value = true
+}
+
+const handleSubmit = async () => {
+  if (!form.customerNo) {
     ElMessage.warning('请选择客户')
     return
   }
-  if (!createForm.serviceType) {
+  if (isDeptOptionsEnabled() && !form.deptNo) {
+    ElMessage.warning('请选择部门')
+    return
+  }
+  if (!form.serviceType) {
     ElMessage.warning('请选择服务类型')
     return
   }
-  if (!createForm.serviceContent) {
+  if (!form.serviceContent) {
     ElMessage.warning('请选择或填写服务内容')
     return
   }
 
-  createDialogVisible.value = true
+  saving.value = true
   try {
-    await request.post('/api/order/', {
-      customerNo: createForm.customerNo,
-      serviceType: createForm.serviceType,
-      serviceContent: createForm.serviceContent,
-      orderAmount: createForm.orderAmount,
-      expectedTime: toLocalDateTimeString(createForm.expectedTime),
-      serviceAddress: createForm.serviceAddress,
-      remarks: createForm.remarks
-    });
-    ElMessage.success('创建订单成功，等待审核...')
-    createDialogVisible.value = false
-    getList()
+    const payload = {
+      customerNo: form.customerNo,
+      deptNo: form.deptNo,
+      serviceType: form.serviceType,
+      serviceContent: form.serviceContent,
+      orderAmount: form.orderAmount,
+      expectedTime: toLocalDateTimeString(form.expectedTime),
+      serviceAddress: form.serviceAddress,
+      remarks: form.remarks
+    }
+
+    if (dialogMode.value === 'create') {
+      await request.post('/api/order/', payload);
+      ElMessage.success('创建订单成功，等待审核(⌐■_■)')
+      dialogVisible.value = false
+      await getList()
+      return
+    }
+
+    await request.put('/api/order/', payload);
+    ElMessage.success('更新成功')
+    dialogVisible.value = false
+    await getList()
   } catch (e) {
     console.error(e)
     ElMessage.error('创建失败：' + (e.response?.data?.message || e))
+  } finally {
+    saving.value = false
   }
 }
 
@@ -571,9 +627,12 @@ const handleAudit = async () => {
 }
 
 //=====【订单编辑】=====
-const openEditDialog = (row) => {
-  Object.assign(editForm, {
+const openEditDialog = async (row) => {
+  dialogMode.value = 'edit'
+  Object.assign(form, {
     orderNo: row.orderNo,
+    customerNo: row.customerNo,
+    deptNo: row.deptNo,
     serviceType: row.serviceType,
     serviceContent: row.serviceContent,
     orderAmount: row.orderAmount,
@@ -581,29 +640,8 @@ const openEditDialog = (row) => {
     serviceAddress: row.serviceAddress,
     remarks: row.remarks
   })
-  editDialogVisible.value = true
-}
-
-const handleUpdate = async () => {
-  editLoading.value = true
-  try {
-    await request.put(`/api/order/${editForm.orderNo}`, {
-      serviceType: editForm.serviceType,
-      serviceContent: editForm.serviceContent,
-      orderAmount: editForm.orderAmount,
-      expectedTime: toLocalDateTimeString(editForm.expectedTime),
-      serviceAddress: editForm.serviceAddress,
-      remarks: editForm.remarks
-    });
-    ElMessage.success('更新成功')
-    editDialogVisible.value = false
-    await getList()
-  } catch (e) {
-    console.error(e)
-    ElMessage.error('订单更新失败：' + (e.response?.data?.message || e.message))
-  } finally {
-    editLoading.value = false
-  }
+  await loadOptions()
+  dialogVisible.value = true
 }
 
 //=====【订单调度】=====
