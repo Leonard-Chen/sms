@@ -564,6 +564,7 @@ const handleSubmit = async () => {
   saving.value = true
   try {
     const payload = {
+      orderNo: form.orderNo,
       customerNo: form.customerNo,
       deptNo: form.deptNo,
       serviceType: form.serviceType,
