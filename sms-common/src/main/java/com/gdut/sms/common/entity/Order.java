@@ -19,7 +19,7 @@ public class Order {
     private String orderNo;             //订单编号
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_no", insertable = false, updatable = false)
+    @JoinColumn(name = "customer_no")
     private Customer customer;          //下单的客户
 
     @ManyToOne
