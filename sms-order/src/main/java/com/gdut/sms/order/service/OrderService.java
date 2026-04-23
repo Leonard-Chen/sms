@@ -167,6 +167,7 @@ public class OrderService {
 
         Order order = new Order(dto);
 
+        order.setOrderStatus(1);
         order.setOrderNo(no);
         order.setCustomer(customer);
         order.setDept(dept);

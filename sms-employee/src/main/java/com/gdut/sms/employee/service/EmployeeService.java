@@ -55,6 +55,7 @@ public class EmployeeService {
         dept.setDeptNo(dto.getDeptNo());
 
         Employee employee = new Employee(dto);
+        employee.setWorkStatus(1);
         employee.setEmployeeNo(no);
         employee.setDept(dept);
         employee.setCreatedBy(user);

@@ -63,6 +63,7 @@ public class CustomerService {
         user.setUsername(username);
 
         Customer customer = new Customer(dto);
+        customer.setFollowUpStatus(1);
         customer.setCustomerNo(no);
         customer.setCreatedBy(user);
 
