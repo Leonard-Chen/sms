@@ -228,37 +228,6 @@
       </template>
     </el-dialog>
 
-    <!-- 【编辑订单】弹窗 -->
-    <el-dialog v-model="editDialogVisible" title="编辑订单" width="520px">
-      <el-form :model="editForm" label-width="100px">
-        <el-form-item label="订单编号">
-          <el-input v-model="editForm.orderNo" disabled/>
-        </el-form-item>
-        <el-form-item label="服务类型" required>
-          <el-input v-model="editForm.serviceType"/>
-        </el-form-item>
-        <el-form-item label="服务内容" required>
-          <el-input v-model="editForm.serviceContent"/>
-        </el-form-item>
-        <el-form-item label="金额" required>
-          <el-input-number v-model="editForm.orderAmount" :min="0" :precision="2"/>
-        </el-form-item>
-        <el-form-item label="期望服务时间">
-          <el-date-picker v-model="editForm.expectedTime" type="datetime" style="width: 100%"/>
-        </el-form-item>
-        <el-form-item label="服务地址">
-          <el-input v-model="editForm.serviceAddress"/>
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="editForm.remarks" type="textarea" :rows="2"/>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="editDialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="editLoading" @click="handleUpdate">保存</el-button>
-      </template>
-    </el-dialog>
-
     <!-- 【审核订单】弹窗 -->
     <el-dialog v-model="auditDialogVisible" title="订单审核" width="500px">
       <el-descriptions :column="1" border>
