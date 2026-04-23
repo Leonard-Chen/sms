@@ -5,6 +5,11 @@ spring:
     url: jdbc:mysql://localhost:3306/sms?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
     username: root
     password: leonard114514
+
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+
   #启动时自动运行数据库初始化脚本
   sql:
     init:
