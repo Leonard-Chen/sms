@@ -95,8 +95,10 @@ public class EmployeeService {
 
     @Transactional
     @Caching(
-            put = @CachePut(value = "employee", key = "#no"),
-            evict = @CacheEvict(value = "employee_list", allEntries = true)
+            evict = {
+                    @CacheEvict(value = "employee", key = "#no"),
+                    @CacheEvict(value = "employee_list", allEntries = true)
+            }
     )
     public void delete(String no) {
         employeeRepository.deleteByEmployeeNo(no);

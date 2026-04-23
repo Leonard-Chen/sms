@@ -5,6 +5,7 @@ import com.gdut.sms.common.entity.User;
 import com.gdut.sms.common.dto.DeptDTO;
 import com.gdut.sms.common.utils.RandomUUID;
 import com.gdut.sms.common.entity.Department;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -66,7 +67,12 @@ public class DeptService {
     }
 
     @Transactional
-    @CacheEvict(value = "dept", key = "#no")
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "dept", key = "#no"),
+                    @CacheEvict(value = "dept_list", allEntries = true)
+            }
+    )
     public void delete(String no) {
         deptRepository.deleteByDeptNo(no);
     }
