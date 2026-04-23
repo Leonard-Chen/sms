@@ -38,6 +38,7 @@ public class DeptService {
     }
 
     @Transactional
+    @CacheEvict(value = "dept_list", allEntries = true)
     public DeptDTO create(DeptDTO dto, String username) {
         String no;
         do {
@@ -56,7 +57,10 @@ public class DeptService {
     }
 
     @Transactional
-    @CachePut(value = "dept", key = "#dto.deptNo")
+    @Caching(
+            put = @CachePut(value = "dept", key = "#dto.deptNo"),
+            evict = @CacheEvict(value = "dept_list", allEntries = true)
+    )
     public DeptDTO update(DeptDTO dto) {
         Department dept = deptRepository.findByDeptNo(dto.getDeptNo())
                 .orElseThrow(() -> new RuntimeException("部门不存在"));
