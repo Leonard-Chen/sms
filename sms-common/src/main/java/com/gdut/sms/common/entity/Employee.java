@@ -41,6 +41,10 @@ public class Employee {
     private LocalDateTime createTime;   //创建时间
 
     public Employee(EmployeeDTO dto) {
+        copyFrom(dto);
+    }
+
+    public void copyFrom(EmployeeDTO dto) {
         employeeNo = dto.getEmployeeNo();
         employeeName = dto.getEmployeeName();
         position = dto.getPosition();

@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 
 /**
  * 后端员工管理核心业务
+ *
  * @author ckx
  */
 @Service
@@ -70,10 +71,12 @@ public class EmployeeService {
             evict = @CacheEvict(value = "employee_list", allEntries = true)
     )
     public EmployeeDTO update(EmployeeDTO dto) {
-        employeeRepository.findByEmployeeNo(dto.getEmployeeNo())
+        Employee employee = employeeRepository.findByEmployeeNo(dto.getEmployeeNo())
                 .orElseThrow(() -> new RuntimeException("员工不存在"));
 
-        return new EmployeeDTO(employeeRepository.save(new Employee(dto)));
+        employee.copyFrom(dto);
+
+        return new EmployeeDTO(employeeRepository.save(employee));
     }
 
     @Transactional

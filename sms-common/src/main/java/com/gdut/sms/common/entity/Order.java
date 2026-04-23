@@ -56,6 +56,10 @@ public class Order {
     private LocalDateTime auditTime;    //审核时间
 
     public Order(OrderDTO dto) {
+        copyFrom(dto);
+    }
+
+    public void copyFrom(OrderDTO dto) {
         orderNo = dto.getOrderNo();
         serviceType = dto.getServiceType();
         serviceContent = dto.getServiceContent();

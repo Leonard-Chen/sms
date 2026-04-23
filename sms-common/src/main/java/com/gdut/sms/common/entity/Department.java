@@ -28,6 +28,10 @@ public class Department {
     private LocalDateTime createTime;   //创建时间
 
     public Department(DeptDTO dto) {
+        copyFrom(dto);
+    }
+
+    public void copyFrom(DeptDTO dto) {
         deptNo = dto.getDeptNo();
         deptName = dto.getDeptName();
     }

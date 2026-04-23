@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 
 /**
  * 后端部门管理核心业务
+ *
  * @author ckx
  */
 @Service
@@ -56,10 +57,12 @@ public class DeptService {
     @Transactional
     @CachePut(value = "dept", key = "#dto.deptNo")
     public DeptDTO update(DeptDTO dto) {
-        deptRepository.findByDeptNo(dto.getDeptNo())
+        Department dept = deptRepository.findByDeptNo(dto.getDeptNo())
                 .orElseThrow(() -> new RuntimeException("部门不存在"));
 
-        return new DeptDTO(deptRepository.save(new Department(dto)));
+        dept.copyFrom(dto);
+
+        return new DeptDTO(deptRepository.save(dept));
     }
 
     @Transactional

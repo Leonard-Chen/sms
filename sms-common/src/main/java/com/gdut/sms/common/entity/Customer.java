@@ -37,6 +37,10 @@ public class Customer {
     private LocalDateTime createTime;   //创建时间
 
     public Customer(CustomerDTO dto) {
+        copyFrom(dto);
+    }
+
+    public void copyFrom(CustomerDTO dto) {
         customerNo = dto.getCustomerNo();
         customerName = dto.getCustomerName();
         customerType = dto.getCustomerType();

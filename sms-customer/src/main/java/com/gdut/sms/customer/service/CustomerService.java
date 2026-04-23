@@ -79,7 +79,9 @@ public class CustomerService {
         Customer customer = customerRepository.findByCustomerNo(dto.getCustomerNo())
                 .orElseThrow(() -> new RuntimeException("客户不存在"));
 
-        return new CustomerDTO(customerRepository.save(new Customer(dto)));
+        customer.copyFrom(dto);
+
+        return new CustomerDTO(customerRepository.save(customer));
     }
 
     @Transactional

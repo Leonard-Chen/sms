@@ -195,7 +195,9 @@ public class OrderService {
             throw new RuntimeException("当前订单状态不允许修改");
         }
 
-        return new OrderDTO(orderRepository.save(new Order(dto)));
+        order.copyFrom(dto);
+
+        return new OrderDTO(orderRepository.save(order));
     }
 
     @Transactional
