@@ -233,7 +233,7 @@ public class OrderService {
         orderRepository.deleteByOrderNo(no);
     }
 
-    @Cacheable(value = "recommend_staff_list", key = "#0", unless = "#result == null || #result.empty")
+    @Cacheable(value = "recommend_staff_list", key = "#orderNo", unless = "#result == null || #result.empty")
     public List<RecommendEmployeeDTO> recommendStaff(String orderNo) {
         Order order = orderRepository.findByOrderNo(orderNo)
                 .orElseThrow(() -> new RuntimeException("订单不存在"));
