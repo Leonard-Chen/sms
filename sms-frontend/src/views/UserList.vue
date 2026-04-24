@@ -30,6 +30,7 @@
     >
       <el-table-column prop="username" label="用户名" min-width="160" show-overflow-tooltip/>
       <el-table-column prop="phone" label="手机号" min-width="140" show-overflow-tooltip/>
+      <el-table-column prop="realName" label="真实姓名" min-width="140" show-overflow-tooltip/>
       <el-table-column prop="email" label="邮箱" min-width="200" show-overflow-tooltip/>
       <el-table-column prop="deptName" label="部门" min-width="140" show-overflow-tooltip/>
       <el-table-column prop="roleName" label="角色" min-width="140" show-overflow-tooltip/>
@@ -74,6 +75,9 @@
       </el-form-item>
       <el-form-item label="密码" :required="dialogMode === 'create'">
         <el-input v-model="form.password" type="password" show-password placeholder="编辑时留空表示不修改"/>
+      </el-form-item>
+      <el-form-item label="真实姓名" required>
+        <el-input v-model="form.realName"/>
       </el-form-item>
       <el-form-item label="手机号">
         <el-input v-model="form.phone"/>
@@ -159,7 +163,16 @@ const resetQuery = () => {
 
 const dialogVisible = ref(false)
 const dialogMode = ref('create') // create | edit
-const form = ref({username: '', password: '', phone: '', email: '', status: 1, deptNo: null, roleCode: ''})
+const form = ref({
+  username: '',
+  password: '',
+  realName: '',
+  phone: '',
+  email: '',
+  status: 1,
+  deptNo: null,
+  roleCode: ''
+})
 const deptOptions = ref([])
 const roleOptions = ref([])
 
@@ -201,7 +214,16 @@ const getList = async () => {
 
 const openCreate = async () => {
   dialogMode.value = 'create'
-  form.value = {username: '', password: '', phone: '', email: '', status: 1, deptNo: null, roleCode: ''}
+  form.value = {
+    username: '',
+    password: '',
+    realName: '',
+    phone: '',
+    email: '',
+    status: 1,
+    deptNo: null,
+    roleCode: ''
+  }
   await getDeptOptions()
   await getRoleOptions()
   dialogVisible.value = true
@@ -212,6 +234,7 @@ const openEdit = async (row) => {
   form.value = {
     username: row.username,
     password: '',
+    realName: row.realName,
     phone: row.phone,
     email: row.email,
     status: row.status ?? 1,
@@ -242,12 +265,7 @@ const handleSubmit = async () => {
       return
     }
 
-    await request.put(`/api/sys/user/${form.value.username}`, {
-      password: form.value.password,
-      phone: form.value.phone,
-      email: form.value.email,
-      status: form.value.status
-    })
+    await request.put(`/api/sys/user/`, form.value)
     ElMessage.success('更新成功')
     dialogVisible.value = false
     await getList()
