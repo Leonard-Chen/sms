@@ -1,12 +1,14 @@
 package com.gdut.sms.system.controller;
 
 import lombok.RequiredArgsConstructor;
+import com.gdut.sms.common.dto.UserDTO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import com.gdut.sms.system.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.gdut.sms.common.annotation.OperationLogging;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * 用户管理微服务controller
@@ -19,6 +21,8 @@ import com.gdut.sms.common.annotation.OperationLogging;
 public class UserController {
 
     private final UserService userService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Operation(summary = "获取用户列表", description = "查询所有用户信息")
     @GetMapping("/")
@@ -49,6 +53,30 @@ public class UserController {
         try {
             userService.delete(username);
             return ResponseEntity.ok(null);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "新增用户", description = "新增一个用户")
+    @PostMapping("/")
+    @OperationLogging(module = "用户管理", type = "新增", desc = "新增一个用户")
+    public ResponseEntity<?> register(@RequestBody UserDTO dto) {
+        try {
+            dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+            return ResponseEntity.ok(userService.create(dto));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @Operation(summary = "更新用户", description = "更新某个用户的信息")
+    @PutMapping("/")
+    @OperationLogging(module = "用户管理", type = "更新", desc = "更新某个用户")
+    public ResponseEntity<?> update(@RequestBody UserDTO dto) {
+        try {
+            dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+            return ResponseEntity.ok(userService.update(dto));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
