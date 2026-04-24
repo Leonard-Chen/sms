@@ -329,6 +329,13 @@ public class OrderService {
     }
 
     @Transactional
+    @Caching(
+            put = @CachePut(value = "order", key = "#req.orderNo"),
+            evict = {
+                    @CacheEvict(value = "order_list", allEntries = true),
+                    @CacheEvict(value = "order_amount", allEntries = true)
+            }
+    )
     public ScheduleDTO assign(AssignRequest req) {
         if (req == null || req.orderNo() == null || req.orderNo().isBlank()) {
             throw new RuntimeException("订单编号不能为空");
@@ -374,6 +381,13 @@ public class OrderService {
     }
 
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "order", allEntries = true),
+                    @CacheEvict(value = "order_list", allEntries = true),
+                    @CacheEvict(value = "order_amount", allEntries = true)
+            }
+    )
     public ScheduleDTO accept(String scheduleNo) {
         ServiceSchedule schedule = scheduleRepository.findByScheduleNo(scheduleNo)
                 .orElseThrow(() -> new RuntimeException("调度单不存在"));
@@ -423,6 +437,13 @@ public class OrderService {
     }
 
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "order", allEntries = true),
+                    @CacheEvict(value = "order_list", allEntries = true),
+                    @CacheEvict(value = "order_amount", allEntries = true)
+            }
+    )
     public ScheduleDTO complete(String scheduleNo) {
         ServiceSchedule schedule = scheduleRepository.findByScheduleNo(scheduleNo)
                 .orElseThrow(() -> new RuntimeException("调度单不存在"));
