@@ -24,5 +24,6 @@ public class Role {
 
     private Integer status = 1;             //状态 (0禁用/1启用)
 
+    @Column(name = "create_time", insertable = false, updatable = false)
     private LocalDateTime createTime;       //创建时间
 }

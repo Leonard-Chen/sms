@@ -36,6 +36,7 @@ public class User implements UserDetails {
     @JoinColumn(name = "dept_no", referencedColumnName = "dept_no")
     private Department dept;            //所在部门
 
+    @Column(name = "create_time", insertable = false, updatable = false)
     private LocalDateTime createTime;   //创建时间
 
     @ManyToOne(fetch = FetchType.EAGER)

@@ -47,6 +47,7 @@ public class Order {
     @JoinColumn(name = "created_by", referencedColumnName = "username")
     private User createdBy;             //创建人
 
+    @Column(name = "create_time", insertable = false, updatable = false)
     private LocalDateTime createTime;   //创建时间
 
     @ManyToOne

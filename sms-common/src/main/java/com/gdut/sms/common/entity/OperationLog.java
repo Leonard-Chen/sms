@@ -35,5 +35,6 @@ public class OperationLog {
 
     private Long time;              //耗时 (单位ms)
 
+    @Column(name = "log_time", insertable = false, updatable = false)
     private LocalDateTime logTime;  //日志记录时间
 }
