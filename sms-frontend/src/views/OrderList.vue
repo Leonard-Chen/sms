@@ -664,14 +664,14 @@ const handleAccept = async (row) => {
   const orderNo = row?.orderNo
   if (!orderNo) return
   try {
-    const res = await request.put(`/api/order/schedule/accept/${orderNo}`);
+    const res = await request.get(`/api/order/schedule/${orderNo}`);
     const scheduleNo = res?.scheduleNo
     if (!scheduleNo) {
       ElMessage.error('未找到调度单，无法接单')
       return
     }
 
-    await request.post(`/api/order/schedule/accept/${scheduleNo}`);
+    await request.put(`/api/order/schedule/accept/${scheduleNo}`);
     ElMessage.success('接单成功，订单进入「服务中」')
     await getList()
 
