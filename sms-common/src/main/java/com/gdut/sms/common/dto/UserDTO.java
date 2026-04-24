@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class UserDTO {
     private String username;
+    private String password;
     private String realName;
     private String email;
     private String phone;
@@ -23,6 +24,7 @@ public class UserDTO {
 
     public UserDTO(User user) {
         username = user.getUsername();
+        //后台传给前端的用户dto不包含敏感信息，如密码
         realName = user.getRealName();
         email = user.getEmail();
         phone = user.getPhone();
