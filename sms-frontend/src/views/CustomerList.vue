@@ -14,6 +14,11 @@
             clearable
             style="max-width: 320px"
         />
+        <el-select v-model="statusFilter" clearable placeholder="跟进状态" style="width: 140px">
+          <el-option :value="1" label="待跟进"/>
+          <el-option :value="2" label="已跟进"/>
+          <el-option :value="3" label="无需跟进"/>
+        </el-select>
         <el-button type="primary" @click="openCreate">新增客户</el-button>
         <el-button @click="resetQuery">重置</el-button>
       </div>
@@ -120,14 +125,17 @@ const dialogMode = ref('create') // create | edit
 const tableData = ref([])
 
 const keyword = ref('')
+const statusFilter = ref(null)
 const page = ref(1)
 const pageSize = ref(10)
 
 const filteredData = computed(() => {
   const raw = tableData.value || []
   const k = (keyword.value || '').trim().toLowerCase()
+  const status = statusFilter.value
   if (!k) return raw
   return raw.filter(r => {
+    if (status != null && r?.followUpStatus !== status) return false
     const s = [
       r?.customerNo,
       r?.customerName,
@@ -149,6 +157,7 @@ watch([keyword, pageSize], () => {
 
 const resetQuery = () => {
   keyword.value = ''
+  statusFilter.value = null
   page.value = 1
   pageSize.value = 10
 }
