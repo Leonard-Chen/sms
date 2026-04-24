@@ -83,7 +83,7 @@ const login = async () => {
 
         window.location.href = url.toString()
       } catch (e) {
-        ElMessage.error('登录失败：' + (e.response?.data?.message || e.message))
+        ElMessage.error('登录失败：' + (e.response?.data?.msg || e.message))
       }
     } else {
       ElMessage.warning('请正确输入用户名或密码')

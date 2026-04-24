@@ -2,6 +2,7 @@ package com.gdut.sms.system.service;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
+import com.gdut.sms.common.entity.User;
 import com.gdut.sms.common.dto.UserDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.cache.annotation.Caching;
@@ -28,10 +29,15 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        return userRepository.findByUsernameWithDeptAndRoles(username)
+    public UserDetails loadUserByUsername(String username) throws RuntimeException {
+        User user = userRepository.findByUsernameWithDeptAndRoles(username)
                 .orElseThrow(() -> new UsernameNotFoundException("用户不存在: " + username));
+
+        if (user.getStatus() == 0) {
+            throw new RuntimeException("账号已被禁用");
+        }
+
+        return user;
     }
 
     @Cacheable(value = "user", key = "#username", unless = "#result == null")

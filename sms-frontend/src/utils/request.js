@@ -30,7 +30,8 @@ request.interceptors.response.use(
     error => {
         console.error('响应出错：' + error)
         //换token请求失败时不要跳登录页，业务接口401才跳
-        if (error.response && error.response.status === 401 && !error.config.url.includes('/oauth2/token')) {
+        if (error.response && error.response.status === 401 && !error.config.url.includes('/oauth2/token')
+        && !window.location.href.includes('/login')) {
             ElMessage.error('登录已过期，请重新登录')
             localStorage.clear()
             window.location.href = '/login'

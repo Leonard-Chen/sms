@@ -9,7 +9,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.context.annotation.Bean;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.cors.CorsConfiguration;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -48,6 +51,7 @@ import javax.sql.DataSource;
  * Spring Security配置
  * 系统模块需同时配置为【授权服务器】和【资源服务器】
  * 以实现【授权】和【身份验证】
+ *
  * @author ckx
  */
 @Configuration
@@ -78,6 +82,16 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userService);
+        provider.setPasswordEncoder(passwordEncoder());
+
+        provider.setHideUserNotFoundExceptions(false);
+        return provider;
     }
 
     @Bean
@@ -216,8 +230,18 @@ public class SecurityConfig {
                             response.setContentType("application/json;charset=utf-8");
 
                             Map<String, Object> result = new HashMap<>();
+
                             result.put("code", HttpServletResponse.SC_UNAUTHORIZED);
-                            result.put("msg", "登录失败: " + ex.getMessage());
+
+                            String msg;
+                            if (ex instanceof UsernameNotFoundException) {
+                                msg = "用户不存在";
+                            } else if (ex instanceof BadCredentialsException) {
+                                msg = "用户名或密码错误";
+                            } else {
+                                msg = ex.getMessage();
+                            }
+                            result.put("msg", msg);
                             response.getWriter().write(objectMapper.writeValueAsString(result));
                         })
                 )
