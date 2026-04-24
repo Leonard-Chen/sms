@@ -125,7 +125,7 @@ public class OrderController {
     }
 
     @Operation(summary = "订单分派", description = "新增服务调度单，将订单分派给某个员工")
-    @PostMapping("/schedule/assign")
+    @PostMapping("/schedule/")
     @OperationLogging(module = "调度单管理", type = "创建", desc = "分派订单，新增调度")
     public ResponseEntity<?> assign(@RequestBody AssignRequest req) {
         try {
