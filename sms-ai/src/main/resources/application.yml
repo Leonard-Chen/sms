@@ -2,8 +2,6 @@ server:
   port: 9600
 
 spring:
-  profiles:
-    include: dto
   application:
     name: sms-ai
   cloud:
