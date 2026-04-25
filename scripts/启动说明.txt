@@ -21,9 +21,9 @@
      分别运行各模块的启动类
 
 三、建议启动顺序
-  1.sms-system（9100，OAuth/库表）
-  2.sms-customer、sms-order、sms-employee、sms-statistics（任意）
-  3.sms-gateway（9000，对外入口）
+  1.sms-system（9100，OAuth/库表，依赖MySQL/Redis/Nacos）
+  2.sms-customer、sms-order、sms-employee、sms-statistics、sms-ai（任意）
+  3.sms-gateway（9000，对外入口，依赖所有业务服务）
 
 四、对外访问
   浏览器：http://localhost/
