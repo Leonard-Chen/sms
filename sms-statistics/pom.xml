@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.gdut</groupId>
-            <artifactId>sms-dao</artifactId>
+            <artifactId>sms-common</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
