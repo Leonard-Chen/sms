@@ -10,6 +10,7 @@ start "sms-system" cmd /k "cd /d "%R%" && title sms-system && mvn -pl sms-system
 echo 等待 system 注册到 Nacos（约 35 秒，可按需 Ctrl+C 中断等待后手动启后续）...
 timeout /t 35 /nobreak >nul
 
+start "sms-ai" cmd /k "cd /d "%R%" && title sms-ai && mvn -pl sms-ai -am spring-boot:run"
 start "sms-customer" cmd /k "cd /d "%R%" && title sms-customer && mvn -pl sms-customer -am spring-boot:run"
 start "sms-order" cmd /k "cd /d "%R%" && title sms-order && mvn -pl sms-order -am spring-boot:run"
 start "sms-employee" cmd /k "cd /d "%R%" && title sms-employee && mvn -pl sms-employee -am spring-boot:run"
